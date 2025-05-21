@@ -1,1 +1,39 @@
 /* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+@include mat.core();
+
+// === Definição de paletas (M2) ===
+$custom-app-primary: mat.m2-define-palette(mat.$m2-blue-palette);
+$custom-app-secondary: mat.m2-define-palette(mat.$m2-indigo-palette, A200, A400, 700);
+$custom-app-warn: mat.m2-define-palette(mat.$m2-red-palette);
+
+// === Tema claro (M2)===
+$custom-light-theme: mat.m2-define-light-theme((color: (primary: $custom-app-primary,
+        accent: $custom-app-secondary,
+        warn: $custom-app-warn,
+      )));
+
+// use o mixin sem o “m2-” no nome
+@include mat.all-component-themes($custom-light-theme);
+
+// === Tema escuro (M2)===
+$custom-dark-theme: mat.m2-define-dark-theme((color: (primary: $custom-app-primary,
+        accent: $custom-app-secondary,
+        warn: $custom-app-warn,
+      )));
+
+// use o mixin sem o “m2-” no nome
+// Só gera o *color system* para o dark-theme (colors)
+.dark-theme {
+  @include mat.all-component-colors($custom-dark-theme);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}

@@ -21,8 +21,31 @@ export class CoursesService {
     );
   }
 
-  save(course: Course) {
+  loadById(id: string) {
+    return this.http.get<Course>(`${this.API}/${id}`).pipe(first());
+  }
+
+  create(course: Course) {
     return this.http.post<Course>(this.API, course).pipe(first());
+  }
+
+
+  update(course: Course) {
+    return this.http.put<Course>(`${this.API}/${course.id}`, course);
+  }
+
+  save(course: Course) {
+    // console.log(course);
+    if (course.id) {
+      // console.log("update");
+      return this.update(course);
+    }
+    // console.log("create");
+    return this.create(course);
+  }
+
+  delete(course: Course) {
+    return this.http.delete(`${this.API}/${course.id}`).pipe(first());
   }
 
 }

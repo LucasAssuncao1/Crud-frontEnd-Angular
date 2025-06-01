@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { FormBuilder, FormGroup, MaxLengthValidator, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { CoursesService } from '../../services/courses.service';
@@ -37,8 +37,8 @@ export class CourseFormComponent implements OnInit {
 
   cadastroForm: FormGroup = this.formBuilder.group({
     id: [''],
-    name: ['', [Validators.required]],
-    category: ['', [Validators.required]],
+    name: ['', [Validators.required, Validators.maxLength(25), Validators.minLength(3)]],
+    category: ['', [Validators.required, Validators.nullValidator]],
   });
 
   onSubmit() {
@@ -61,6 +61,24 @@ export class CourseFormComponent implements OnInit {
   onCancel() {
     this.location.back();
   }
+
+  getErrorMessage(formField: string){
+    const field = this.cadastroForm.get(formField);
+
+    if (field?.hasError('required')) {
+      return 'Campo obrigatório' ;
+    }
+    if (field?.hasError('minlength')) {
+      const requiredLength = field.errors ? field.errors['minlength']['requiredLength'] : 3;
+      return "Tamanho mínimo precisa ser de " + requiredLength + " caracteres." ;
+    }
+    if (field?.hasError('maxlength')) {
+      const requiredLength = field.errors ? field.errors['maxlength']['requiredLength'] : 25;
+      return "Tamanho máximo de "  + requiredLength + " caracteres excedido." ;
+    }
+    return ''
+  }
+
 
 
 }

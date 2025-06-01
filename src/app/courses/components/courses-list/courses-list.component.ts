@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { Course } from '../../model/course';
 import { CoursesService } from '../../services/courses.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 export class CoursesListComponent implements OnInit {
 
   @Input() courses: Course[] = [];
+  @Output() remove = new EventEmitter(false);
 
   constructor() { }
 
@@ -21,8 +22,8 @@ export class CoursesListComponent implements OnInit {
 
   }
 
-  onDelete(){
-    this.courses.fi
+  onDelete(course: Course) {
+    this.remove.emit(course);
   }
 
 }

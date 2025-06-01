@@ -44,8 +44,8 @@ export class CoursesService {
     return this.create(course);
   }
 
-  delete(course: Course) {
-    return this.http.delete(`${this.API}/${course.id}`).pipe(first());
+  delete(id: string) {
+    return this.http.delete(`${this.API}/${id}`).pipe(first());
   }
 
 }

@@ -44,7 +44,7 @@ export class CourseFormComponent implements OnInit {
   onSubmit() {
     this.coursesService.save(this.cadastroForm.value).subscribe(
       response => this.onSuccess(), error => this.onError()
-    );
+    ); 
 
 
   }

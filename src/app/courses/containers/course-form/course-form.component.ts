@@ -1,12 +1,13 @@
 import { Location } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { FormBuilder, FormGroup, MaxLengthValidator, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, MaxLengthValidator, UntypedFormArray, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { CoursesService } from '../../services/courses.service';
 import { Course } from '../../model/course';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
+import { Lesson } from '../../model/Lesson';
 
 @Component({
   selector: 'app-courses-form',
@@ -24,27 +25,56 @@ export class CourseFormComponent implements OnInit {
 
   constructor() { }
 
+  cadastroForm!: FormGroup;
+
+  // cadastroForm: FormGroup = this.formBuilder.group({
+ //   id: [''],
+ //   name: ['', [Validators.required, Validators.maxLength(25), Validators.minLength(3)]],
+ //   category: ['', [Validators.required, Validators.nullValidator]],
+ // });
+
   ngOnInit(): void {
     const course: Course = this.route.snapshot.data['course']
-    this.cadastroForm.patchValue(course);
-    // this.cadastroForm.setValue({
-    //   id: course.id,
-    //   name: course.name,
-    //   category: course.category,
-    // });
+    this.cadastroForm = this.formBuilder.group({
+      id: [course.id],
+      name: [course.name, [Validators.required, Validators.maxLength(25), Validators.minLength(3)]],
+      category: [course.category, [Validators.required, Validators.nullValidator]],
+      lessons:this.formBuilder.array(this.getLessons(course))
+    });
 
   }
 
-  cadastroForm: FormGroup = this.formBuilder.group({
-    id: [''],
-    name: ['', [Validators.required, Validators.maxLength(25), Validators.minLength(3)]],
-    category: ['', [Validators.required, Validators.nullValidator]],
-  });
+
+  private getLessons(course: Course) {
+    const lessons = [];
+    if (course?.lessons) {
+      course.lessons.forEach(lesson => lessons.push(this.createLesson(lesson)));
+    } else {
+      lessons.push(this.createLesson());
+    }
+    return lessons;
+  }
+
+  getLessonsFormArray(){
+    return (<UntypedFormArray>this.cadastroForm.get('lessons'))?.controls;
+  }
+
+
+  private createLesson(lesson: Lesson = { id: '', name: '', youtubeUrl: ''}) {
+    return this.formBuilder.group({
+      id: [lesson.id],
+      name:[lesson.name],
+      youtubeUrl:[lesson.youtubeUrl]
+    });
+
+  }
+
+
 
   onSubmit() {
     this.coursesService.save(this.cadastroForm.value).subscribe(
       response => this.onSuccess(), error => this.onError()
-    ); 
+    );
 
 
   }
@@ -78,7 +108,5 @@ export class CourseFormComponent implements OnInit {
     }
     return ''
   }
-
-
 
 }

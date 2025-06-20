@@ -16,7 +16,6 @@ import { Lesson } from '../../model/Lesson';
 })
 export class CourseFormComponent implements OnInit {
 
-
   private formBuilder = inject(FormBuilder);
   private coursesService = inject(CoursesService);
   private snackBar = inject(MatSnackBar);
@@ -28,10 +27,10 @@ export class CourseFormComponent implements OnInit {
   cadastroForm!: FormGroup;
 
   // cadastroForm: FormGroup = this.formBuilder.group({
- //   id: [''],
- //   name: ['', [Validators.required, Validators.maxLength(25), Validators.minLength(3)]],
- //   category: ['', [Validators.required, Validators.nullValidator]],
- // });
+  //   id: [''],
+  //   name: ['', [Validators.required, Validators.maxLength(25), Validators.minLength(3)]],
+  //   category: ['', [Validators.required, Validators.nullValidator]],
+  // });
 
   ngOnInit(): void {
     const course: Course = this.route.snapshot.data['course']
@@ -39,11 +38,21 @@ export class CourseFormComponent implements OnInit {
       id: [course.id],
       name: [course.name, [Validators.required, Validators.maxLength(25), Validators.minLength(3)]],
       category: [course.category, [Validators.required, Validators.nullValidator]],
-      lessons:this.formBuilder.array(this.getLessons(course))
+      lessons: this.formBuilder.array(this.getLessons(course))
     });
 
   }
 
+
+
+  getLessonsFormArray() {
+    return (<UntypedFormArray>this.cadastroForm.get('lessons'))?.controls;
+  }
+
+  addNewLesson() {
+    const lessons = this.cadastroForm.get('lessons') as UntypedFormArray;
+    lessons.push(this.createLesson());
+  }
 
   private getLessons(course: Course) {
     const lessons = [];
@@ -55,19 +64,20 @@ export class CourseFormComponent implements OnInit {
     return lessons;
   }
 
-  getLessonsFormArray(){
-    return (<UntypedFormArray>this.cadastroForm.get('lessons'))?.controls;
-  }
-
-
-  private createLesson(lesson: Lesson = { id: '', name: '', youtubeUrl: ''}) {
+  private createLesson(lesson: Lesson = { id: '', name: '', youtubeUrl: '' }) {
     return this.formBuilder.group({
       id: [lesson.id],
-      name:[lesson.name],
-      youtubeUrl:[lesson.youtubeUrl]
+      name: [lesson.name],
+      youtubeUrl: [lesson.youtubeUrl]
     });
 
   }
+
+  deleteLesson(index: number) {
+    const lessons =  this.cadastroForm.get('lessons') as UntypedFormArray;
+    lessons.removeAt(index);
+
+}
 
 
 
@@ -92,19 +102,19 @@ export class CourseFormComponent implements OnInit {
     this.location.back();
   }
 
-  getErrorMessage(formField: string){
+  getErrorMessage(formField: string) {
     const field = this.cadastroForm.get(formField);
 
     if (field?.hasError('required')) {
-      return 'Campo obrigatório' ;
+      return 'Campo obrigatório';
     }
     if (field?.hasError('minlength')) {
       const requiredLength = field.errors ? field.errors['minlength']['requiredLength'] : 3;
-      return "Tamanho mínimo precisa ser de " + requiredLength + " caracteres." ;
+      return "Tamanho mínimo precisa ser de " + requiredLength + " caracteres.";
     }
     if (field?.hasError('maxlength')) {
       const requiredLength = field.errors ? field.errors['maxlength']['requiredLength'] : 25;
-      return "Tamanho máximo de "  + requiredLength + " caracteres excedido." ;
+      return "Tamanho máximo de " + requiredLength + " caracteres excedido.";
     }
     return ''
   }

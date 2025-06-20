@@ -72,11 +72,6 @@ export class CoursesComponent implements OnInit {
   }
 
 
-
-
-
-
-
   onMessage(message: string) {
     this.snackBar.open(message, 'X',
       {

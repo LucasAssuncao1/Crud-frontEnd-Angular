@@ -38,7 +38,7 @@ export class CourseFormComponent implements OnInit {
       id: [course.id],
       name: [course.name, [Validators.required, Validators.maxLength(25), Validators.minLength(3)]],
       category: [course.category, [Validators.required, Validators.nullValidator]],
-      lessons: this.formBuilder.array(this.getLessons(course))
+      lessons: this.formBuilder.array(this.getLessons(course), [Validators.required])
     });
 
   }
@@ -67,8 +67,8 @@ export class CourseFormComponent implements OnInit {
   private createLesson(lesson: Lesson = { id: '', name: '', youtubeUrl: '' }) {
     return this.formBuilder.group({
       id: [lesson.id],
-      name: [lesson.name],
-      youtubeUrl: [lesson.youtubeUrl]
+      name: [lesson.name, [Validators.required,  Validators.minLength(5), Validators.maxLength(25)]],
+      youtubeUrl: [lesson.youtubeUrl, [Validators.required, Validators.minLength(10), Validators.maxLength(15)]]
     });
 
   }
@@ -79,14 +79,22 @@ export class CourseFormComponent implements OnInit {
 
 }
 
+  isFormArrayValid(){
+    const lessons = this.cadastroForm.get('lessons') as UntypedFormArray;
+
+    return !lessons.valid && lessons.hasError('required') && lessons.touched;
+  }
 
 
   onSubmit() {
-    this.coursesService.save(this.cadastroForm.value).subscribe(
-      response => this.onSuccess(), error => this.onError()
-    );
+    if(this.cadastroForm.valid){
 
-
+      this.coursesService.save(this.cadastroForm.value).subscribe(
+        response => this.onSuccess(), error => this.onError()
+      );
+    } else {
+      this.onError();
+    }
   }
 
   onSuccess() {

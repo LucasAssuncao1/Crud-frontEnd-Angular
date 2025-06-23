@@ -8,6 +8,7 @@ import { Course } from '../../model/course';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Lesson } from '../../model/Lesson';
+import { FormUtilsService } from '../../../shared/form/form-utils.service';
 
 @Component({
   selector: 'app-courses-form',
@@ -21,6 +22,7 @@ export class CourseFormComponent implements OnInit {
   private snackBar = inject(MatSnackBar);
   private location = inject(Location);
   private route = inject(ActivatedRoute)
+  public formUtils = inject(FormUtilsService);
 
   constructor() { }
 
@@ -79,7 +81,7 @@ export class CourseFormComponent implements OnInit {
 
 }
 
-  isFormArrayValid(){
+  isFormArrayRequired(){
     const lessons = this.cadastroForm.get('lessons') as UntypedFormArray;
 
     return !lessons.valid && lessons.hasError('required') && lessons.touched;
@@ -93,7 +95,7 @@ export class CourseFormComponent implements OnInit {
         response => this.onSuccess(), error => this.onError()
       );
     } else {
-      this.onError();
+        this.formUtils.validateAllFormFields(this.cadastroForm);
     }
   }
 
@@ -108,23 +110,6 @@ export class CourseFormComponent implements OnInit {
 
   onCancel() {
     this.location.back();
-  }
-
-  getErrorMessage(formField: string) {
-    const field = this.cadastroForm.get(formField);
-
-    if (field?.hasError('required')) {
-      return 'Campo obrigatório';
-    }
-    if (field?.hasError('minlength')) {
-      const requiredLength = field.errors ? field.errors['minlength']['requiredLength'] : 3;
-      return "Tamanho mínimo precisa ser de " + requiredLength + " caracteres.";
-    }
-    if (field?.hasError('maxlength')) {
-      const requiredLength = field.errors ? field.errors['maxlength']['requiredLength'] : 25;
-      return "Tamanho máximo de " + requiredLength + " caracteres excedido.";
-    }
-    return ''
   }
 
 }

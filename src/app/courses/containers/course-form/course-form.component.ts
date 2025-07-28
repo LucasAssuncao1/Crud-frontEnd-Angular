@@ -7,7 +7,7 @@ import { CoursesService } from '../../services/courses.service';
 import { Course } from '../../model/course';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { Lesson } from '../../model/Lesson';
+import { Lesson } from '../../model/lesson';
 import { FormUtilsService } from '../../../shared/form/form-utils.service';
 
 @Component({

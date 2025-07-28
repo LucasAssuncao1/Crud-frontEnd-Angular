@@ -1,6 +1,6 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { catchError, Observable, of } from 'rxjs';
+import { catchError, Observable, of, tap } from 'rxjs';
 
 import { ErrorDialogComponent } from '../../../shared/components/error-dialog/error-dialog.component';
 import { Course } from '../../model/course';
@@ -8,6 +8,8 @@ import { CoursesService } from '../../services/courses.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
+import { CoursePage } from '../../model/course-page';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-courses',
@@ -24,7 +26,13 @@ export class CoursesComponent implements OnInit {
   // private router = inject(Router);
   // private route = inject(ActivatedRoute);
 
-  courses$!: Observable<Course[]>;
+  courses$!: Observable<CoursePage>;
+
+   @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+  pageIndex = 0;
+  pageSize = 10;
+
 
   displayedColumns = ['name', 'category', 'actions'];
 
@@ -33,11 +41,16 @@ export class CoursesComponent implements OnInit {
 
   }
 
-  loadCourses() {
-    this.courses$ = this.coursesService.list().pipe(
+  loadCourses(pageEvent: PageEvent = {length: 0,  pageIndex: 0, pageSize: 10}) {
+    this.courses$ = this.coursesService.list(pageEvent.pageIndex, pageEvent.pageSize)
+    .pipe(
+      tap(() => {
+        this.pageIndex = pageEvent.pageIndex,
+        this.pageSize = pageEvent.pageSize
+      }),
       catchError(error => {
         this.errorDialog('Erro ao carregar os dados');
-        return of([])
+        return of({courses: [], totalElements:0 , totalPages: 0})
       })
     );
   }

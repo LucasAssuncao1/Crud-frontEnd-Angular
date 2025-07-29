@@ -11,8 +11,8 @@ describe('CoursesListComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CoursesListComponent ]
-    })
+    imports: [CoursesListComponent]
+})
     .compileComponents();
   }));
 

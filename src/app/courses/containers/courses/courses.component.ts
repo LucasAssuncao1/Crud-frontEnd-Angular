@@ -1,27 +1,26 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatToolbar } from '@angular/material/toolbar';
 import { catchError, Observable, of, tap } from 'rxjs';
 
-import { ErrorDialogComponent } from '../../../shared/components/error-dialog/error-dialog.component';
-import { Course } from '../../model/course';
-import { CoursesService } from '../../services/courses.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
-import { CoursePage } from '../../model/course-page';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatCard } from '@angular/material/card';
-import { MatToolbar } from '@angular/material/toolbar';
-import { NgIf, AsyncPipe } from '@angular/common';
+import { ErrorDialogComponent } from '../../../shared/components/error-dialog/error-dialog.component';
 import { CoursesListComponent } from '../../components/courses-list/courses-list.component';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { Course } from '../../model/course';
+import { CoursePage } from '../../model/course-page';
+import { CoursesService } from '../../services/courses.service';
 
 @Component({
     selector: 'app-courses',
     templateUrl: './courses.component.html',
     styleUrl: './courses.component.scss',
     standalone: true,
-    imports: [MatCard, MatToolbar, NgIf, CoursesListComponent, MatPaginator, MatProgressSpinner, AsyncPipe]
+    imports: [MatCard, MatToolbar, CoursesListComponent, MatPaginator, MatProgressSpinner, AsyncPipe]
 })
 export class CoursesComponent implements OnInit {
 

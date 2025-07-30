@@ -8,7 +8,10 @@
       <mat-form-field class="full-width">
         <input matInput #name maxlength="25" placeholder="Nome" formControlName="name">
         <mat-hint align="end">{{name.value.length}}/25</mat-hint>
-        <mat-error *ngIf="cadastroForm.get('name')?.invalid">{{formUtils.getErrorMessage(cadastroForm, 'name')}}</mat-error>
+
+        @if(cadastroForm.get('name')?.invalid){
+          <mat-error>{{formUtils.getErrorMessage(cadastroForm, 'name')}}</mat-error>
+        }
       </mat-form-field>
 
       <mat-form-field class="full-width">
@@ -17,7 +20,10 @@
           <mat-option value="Front-end">Front-End</mat-option>
           <mat-option value="Back-end">Back-End</mat-option>
         </mat-select>
-        <mat-error *ngIf="cadastroForm.get('category')?.invalid">{{formUtils.getErrorMessage(cadastroForm, 'category')}}</mat-error>
+
+        @if (cadastroForm.get('category')?.invalid) {
+          <mat-error>{{formUtils.getErrorMessage(cadastroForm, 'category')}}</mat-error>
+        }
       </mat-form-field>
 
       <mat-toolbar>
@@ -27,39 +33,42 @@
         </button>
       </mat-toolbar>
 
-       <mat-error *ngIf="formUtils.isFormArrayRequired(cadastroForm, 'lessons')" class="lesson-array-error"> Adicione pelo menos uma aula </mat-error>
+      @if (formUtils.isFormArrayRequired(cadastroForm, 'lessons')) {
+        <mat-error class="lesson-array-error"> Adicione pelo menos uma aula </mat-error>
+      }
 
-      <table style="width: 100%"
-            formArrayName="lessons"
-           *ngFor="let lesson of getLessonsFormArray(); let i = index">
-        <tr [formGroupName]="i">
-          <td style="width: 60%">
-            <mat-form-field class="full-width">
-              <mat-label>Nome da Aula</mat-label>
-              <input matInput formControlName="name">
-                <mat-error *ngIf="getLessonsFormArray()[i].get('name')">
-                   {{formUtils.getFormArrayFieldErrorMessage(cadastroForm, 'lessons', 'name', i )}}
+      @for (lesson of getLessonsFormArray(); track lesson; let i = $index) {
+
+        <table style="width: 100%" formArrayName="lessons">
+          <tr [formGroupName]="i">
+            <td style="width: 60%">
+              <mat-form-field class="full-width">
+                <mat-label>Nome da Aula</mat-label>
+                <input matInput formControlName="name">
+                  <mat-error *ngIf="getLessonsFormArray()[i].get('name')">
+                    {{formUtils.getFormArrayFieldErrorMessage(cadastroForm, 'lessons', 'name', i )}}
+                  </mat-error>
+                </mat-form-field>
+              </td>
+
+              <td style="width: 30%; height: auto;">
+                <mat-form-field class="full-width" >
+                  <mat-label>URL</mat-label>
+                <span matTextPrefix>https://youtu.be/</span>
+                <input matInput formControlName="youtubeUrl">
+                <mat-error *ngIf="getLessonsFormArray()[i].get('youtubeUrl')">
+                  {{formUtils.getFormArrayFieldErrorMessage(cadastroForm, 'lessons', 'youtubeUrl', i )}}
                 </mat-error>
-            </mat-form-field>
-          </td>
-
-          <td style="width: 30%; height: auto;">
-            <mat-form-field class="full-width" >
-              <mat-label>URL</mat-label>
-              <span matTextPrefix>https://youtu.be/</span>
-              <input matInput formControlName="youtubeUrl">
-              <mat-error *ngIf="getLessonsFormArray()[i].get('youtubeUrl')">
-                {{formUtils.getFormArrayFieldErrorMessage(cadastroForm, 'lessons', 'youtubeUrl', i )}}
-              </mat-error>
-            </mat-form-field>
-          </td>
-          <td>
-            <button mat-icon-button (click)="deleteLesson(i)" color="warn">
-              <mat-icon aria-label="Remover aula">delete</mat-icon>
-            </button>
-          </td>
-        </tr>
-      </table>
+              </mat-form-field>
+            </td>
+            <td>
+              <button mat-icon-button (click)="deleteLesson(i)" color="warn">
+                <mat-icon aria-label="Remover aula">delete</mat-icon>
+              </button>
+            </td>
+          </tr>
+       </table>
+      }
     </form>
   </mat-card-content>
 

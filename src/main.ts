@@ -1,19 +1,20 @@
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-
-
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient } from '@angular/common/http';
-import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
-import { AppRoutingModule } from './app/app-routing.module';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { AppComponent } from './app/app.component';
 import { importProvidersFrom } from '@angular/core';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { PreloadAllModules, provideRouter, withPreloading } from '@angular/router';
+
+import { AppComponent } from './app/app.component';
+import { APP_ROUTES } from './app/app.routes';
+
 
 bootstrapApplication(AppComponent, {
     providers: [
-        importProvidersFrom(BrowserModule, AppRoutingModule, MatToolbarModule),
+        importProvidersFrom(BrowserModule, MatToolbarModule),
         provideAnimationsAsync(),
-        provideHttpClient()
+        provideHttpClient(),
+        provideRouter(APP_ROUTES, withPreloading(PreloadAllModules))
     ]
 })
   .catch(err => console.error(err));
